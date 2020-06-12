@@ -40,13 +40,19 @@ traversal_path = []
 
 
 # create method for travel
-def move_to_room():
-    pass
+def move_to_room(location):
+    # this will make it simpler to move from one room to anohter
+    player.travel(location)
 
 
 # create method for creating a map for all rooms in the graph
 def room_map():
-    pass
+    """
+    variable to hold the current location of player and a dictionary to hold key value pairs
+    """
+    current_location = player.current_room
+
+    the_map = {}
 
 
 # method to find and pick a random and unvisited room in graph
