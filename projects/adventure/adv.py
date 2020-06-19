@@ -29,6 +29,8 @@ player = Player(world.starting_room)
 
 
 traversal_path = []
+graph_map = {}
+visited_rooms_map = []
 
 # UPER
 """
@@ -39,52 +41,57 @@ traversal_path = []
 """
 
 
-# create method for travel
-def move_to_room(location):
-    # this will make it simpler to move from one room to anohter
-    player.travel(location)
+# this fucntion is linking the exits of our rooms to each other
+def direction_links(direction):
+    if direction == 'n':
+        # return the opposite direction in order to get our exit
+        return 's'
+
+    elif direction == 's':
+        return 'n'
+
+    elif direction == 'e':
+        return 'w'
+
+    elif direction == 'w':
+        return 'e'
+    else:
+        return "your input has caused some error with the direction_link function"
 
 
-# create method for creating a map for all rooms in the graph
-def room_map():
-    """
-    variable to hold the current location of player and a dictionary to hold key value pairs
-    """
-    current_location = player.current_room
+graph_map[player.current_room] = player.current_room.get_exits()
+print('room exits:', graph_map[player.current_room])
+ # when the number of rooms in room_graph are less then the graph itself we want to traverse, and remove the current room
+ # so we don't count it more than once
+while len(graph_map) < len(room_graph) - 1:
+     # checking if the our current room has already been visited
+    if player.current_room not in graph_map:
+        # set the list of exits to be our current room
+        graph_map[player.current_room] = player.current_room.get_exits()
+        # mark the room we just visited by adding the direction from the room to our list of visited rooms
+        prevous_room = visited_rooms_map[-1]
 
-    the_map = {}
+        # check current path we are moving on for any dead ends
+    while len(graph_map[player.current_room]) < 1:
+        # remove the last direction from our dictionary so we wont move threw it again
+        last_direction = visited_rooms_map.pop()
 
+        # move back from the rooms
+        player.travel(last_direction)
+        # add the path to the paths that we have traveled in
+        traversal_path.append(last_direction)
+    else:
+        # check if there any rooms we have not explored yet
+        # remove the last direction
+        exit = graph_map[player.current_room].pop()
 
-# method to find and pick a random and unvisited room in graph
-def unvisited_exit_room():
-    pass
+        # link the exit then save our exit to our traversal_path
+        traversal_path.append(exit)
 
+        visited_rooms_map.append(direction_links(exit))
+        # moving to the next room
+        player.travel(exit)
 
-# ---BFS---
-
-# BFS method to check if rooms are visited or not
-
-# will need to see if our visited rooms are less then the rooms in the graph
-# create variable to hold our current room id to keep track of where we are
-
-""" 
-this method was tired on its own and fails the test other methods 
-found above me be flushed out before we can see if this BFS would work.
-"""
-
-
-def traverse_graph(some_graph, start_node):
-    to_visit = [start_node]  # list with one item
-    visited = []  # empty list if we have not visited anything
-
-    while to_visit:
-        node_to_check = to_visit.pop(0)
-        for neighbor_node in some_graph[node_to_check]:
-            if neighbor_node not in visited:
-                to_visit.insert(0, neighbor_node)  # put in route plan
-                visited.append(neighbor_node)  # node we already added
-
-    return visited
 
 
 # TRAVERSAL TEST
